@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict/>
+<dict>
+	<key>statussymbols</key>
+	<dict>
+		<key>I</key>
+		<string>❎</string>
+		<key>S</key>
+		<string>❎</string>
+		<key>U</key>
+		<string>❎</string>
+		<key>R</key>
+		<string>▶️</string>
+		<key>T</key>
+		<string>💤</string>
+		<key>Z</key>
+		<string>🆘</string>
+		<key>default</key>
+		<string>⁉️</string>
+	</dict>
+</dict>
 </plist>

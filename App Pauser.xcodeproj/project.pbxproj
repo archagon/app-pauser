@@ -16,6 +16,8 @@
 		4E3CF8AA1831ECF7006B3201 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E3CF8A91831ECF7006B3201 /* Images.xcassets */; };
 		4E3CF8CD1832D0FB006B3201 /* APProcessDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E3CF8CC1832D0FB006B3201 /* APProcessDataSource.m */; };
 		4E3CF8D31833F755006B3201 /* APSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4E3CF8D21833F755006B3201 /* APSettings.plist */; };
+		4E3CF8D71833F84C006B3201 /* APSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E3CF8D61833F84C006B3201 /* APSettings.m */; };
+		4E3CF8D91833FAB4006B3201 /* NOTES.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4E3CF8D81833FAB4006B3201 /* NOTES.rtf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +40,9 @@
 		4E3CF8CB1832D0FB006B3201 /* APProcessDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APProcessDataSource.h; sourceTree = "<group>"; };
 		4E3CF8CC1832D0FB006B3201 /* APProcessDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APProcessDataSource.m; sourceTree = "<group>"; };
 		4E3CF8D21833F755006B3201 /* APSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APSettings.plist; sourceTree = "<group>"; };
+		4E3CF8D51833F84C006B3201 /* APSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APSettings.h; sourceTree = "<group>"; };
+		4E3CF8D61833F84C006B3201 /* APSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APSettings.m; sourceTree = "<group>"; };
+		4E3CF8D81833FAB4006B3201 /* NOTES.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = NOTES.rtf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +101,8 @@
 				4E3CF8A41831ECF7006B3201 /* APAppDelegate.m */,
 				4E3CF8CB1832D0FB006B3201 /* APProcessDataSource.h */,
 				4E3CF8CC1832D0FB006B3201 /* APProcessDataSource.m */,
+				4E3CF8D51833F84C006B3201 /* APSettings.h */,
+				4E3CF8D61833F84C006B3201 /* APSettings.m */,
 				4E3CF8A61831ECF7006B3201 /* MainMenu.xib */,
 				4E3CF8A91831ECF7006B3201 /* Images.xcassets */,
 				4E3CF8981831ECF7006B3201 /* Supporting Files */,
@@ -112,6 +119,7 @@
 				4E3CF89F1831ECF7006B3201 /* App Pauser-Prefix.pch */,
 				4E3CF8A01831ECF7006B3201 /* Credits.rtf */,
 				4E3CF8D21833F755006B3201 /* APSettings.plist */,
+				4E3CF8D81833FAB4006B3201 /* NOTES.rtf */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -180,6 +188,7 @@
 			files = (
 				4E3CF89C1831ECF7006B3201 /* InfoPlist.strings in Resources */,
 				4E3CF8AA1831ECF7006B3201 /* Images.xcassets in Resources */,
+				4E3CF8D91833FAB4006B3201 /* NOTES.rtf in Resources */,
 				4E3CF8A21831ECF7006B3201 /* Credits.rtf in Resources */,
 				4E3CF8A81831ECF7006B3201 /* MainMenu.xib in Resources */,
 				4E3CF8D31833F755006B3201 /* APSettings.plist in Resources */,
@@ -194,6 +203,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E3CF89E1831ECF7006B3201 /* main.m in Sources */,
+				4E3CF8D71833F84C006B3201 /* APSettings.m in Sources */,
 				4E3CF8CD1832D0FB006B3201 /* APProcessDataSource.m in Sources */,
 				4E3CF8A51831ECF7006B3201 /* APAppDelegate.m in Sources */,
 			);

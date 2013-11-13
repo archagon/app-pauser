@@ -185,37 +185,7 @@
     }
     else if ([[tableColumn identifier] isEqualToString:@"status"])
     {
-        //https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/ps.1.html
-        //I       Marks a process that is idle (sleeping for longer than about 20 seconds).
-        //R       Marks a runnable process.
-        //S       Marks a process that is sleeping for less than about 20 seconds.
-        //T       Marks a stopped process.
-        //U       Marks a process in uninterruptible wait.
-        //Z       Marks a dead process (a ``zombie'').
-    
-        if ([[status substringToIndex:1] isEqualToString:@"I"] ||
-            [[status substringToIndex:1] isEqualToString:@"S"] ||
-            [[status substringToIndex:1] isEqualToString:@"U"])
-        {
-            status = [@"❎ " stringByAppendingString:status];
-        }
-        else if ([[status substringToIndex:1] isEqualToString:@"R"])
-        {
-            status = [@"▶️ " stringByAppendingString:status];
-        }
-        else if ([[status substringToIndex:1] isEqualToString:@"T"])
-        {
-            status = [@"💤 " stringByAppendingString:status];
-        }
-        else if ([[status substringToIndex:1] isEqualToString:@"Z"])
-        {
-            status = [@"🆘 " stringByAppendingString:status];
-        }
-        else
-        {
-            status = [@"⁉️ " stringByAppendingString:status];
-        }
-        
+        status = [APSettings settingForKeyPath:[@"statussymbols." stringByAppendingString:[status substringToIndex:1]]];
         [cellView.imageView setHidden:YES];
         cellView.textField.stringValue = status;
         cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
