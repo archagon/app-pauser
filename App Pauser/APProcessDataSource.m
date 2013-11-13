@@ -10,7 +10,8 @@
 
 @interface APProcessDataSource ()
 
-@property (nonatomic, retain, readwrite) NSMutableArray* runningApplications;
+@property (nonatomic, retain) NSArray* runningApplications;
+@property (nonatomic, retain, readwrite) NSArray* applications;
 @property (nonatomic, retain) NSMutableDictionary* processIDToCPUTime;
 @property (nonatomic, retain) NSTask* topTask;
 @property (nonatomic, retain) NSMutableDictionary* cachedProcessIDsToStatuses;
@@ -33,7 +34,8 @@
     self = [super init];
     if (self)
     {
-        self.runningApplications = [NSMutableArray array];
+        self.runningApplications = [NSArray array];
+        self.applications = [NSArray array];
         self.processIDToCPUTime = [NSMutableDictionary dictionary];
 
         self.topTaskRegex = [NSRegularExpression regularExpressionWithPattern:@"\\s*(\\d+)\\s+(\\d+\\.\\d+)\\s*"
@@ -90,8 +92,10 @@
 -(void) updateRunningApplications
 {
     // why do it like this? so that any KVO observers don't get two messages
-    _runningApplications = [NSMutableArray arrayWithArray:[[NSWorkspace sharedWorkspace] runningApplications]];
-    [self tableView:nil sortDescriptorsDidChange:self.cachedSortDescriptors];
+    self.runningApplications = [NSArray arrayWithArray:[[NSWorkspace sharedWorkspace] runningApplications]];
+    NSArray* filteredApplications = [self filter:self.runningApplications];
+    NSArray* sortedApplications = [self sort:filteredApplications WithSortDescriptors:self.cachedSortDescriptors];
+    self.applications = sortedApplications;
     
     for (NSRunningApplication* runningApplication in self.runningApplications)
     {
@@ -149,7 +153,7 @@
         // attempt to retrieve manually
         [self updateStatusForApplication:application];
         
-//        NSAssert(self.cachedProcessIDsToStatuses[pidKey], @"ps could not find process %@", pidKey);
+        NSAssert(self.cachedProcessIDsToStatuses[pidKey], @"ps could not find process %@", pidKey);
         
         if (!self.cachedProcessIDsToStatuses[pidKey])
         {
@@ -232,6 +236,8 @@
     return 0.5f;
 }
 
+#pragma mark NSTableViewDataSource
+
 -(NSInteger) numberOfRowsInTableView:(NSTableView*)tableView
 {
     return [self.runningApplications count];
@@ -244,26 +250,38 @@
         self.cachedSortDescriptors = [tableView sortDescriptors];
     }
     
-    [self.runningApplications sortUsingComparator:^NSComparisonResult(id obj1, id obj2)
-    {
-        NSComparisonResult result = NSOrderedSame;
-        
-        for (NSSortDescriptor* descriptor in self.cachedSortDescriptors)
-        {
-            result = [self compareApplication1:obj1 application2:obj2 byKey:[descriptor key]];
-            
-            if (result != NSOrderedSame)
-            {
-                result *= ([descriptor ascending] ? 1 : -1);
-                break;
-            }
-        }
-        
-        return result;
-    }];
+    [self updateRunningApplications];
+}
+
+#pragma mark - Sorting and Filtering
+
+-(NSArray*) sort:(NSArray*)applications WithSortDescriptors:(NSArray*)sortDescriptors
+{
+    NSMutableArray* array = [NSMutableArray arrayWithArray:applications];
+    [array sortUsingComparator:^NSComparisonResult(id obj1, id obj2)
+     {
+         NSComparisonResult result = NSOrderedSame;
+         
+         for (NSSortDescriptor* descriptor in sortDescriptors)
+         {
+             result = [self compareApplication1:obj1 application2:obj2 byKey:[descriptor key]];
+             
+             if (result != NSOrderedSame)
+             {
+                 result *= ([descriptor ascending] ? 1 : -1);
+                 break;
+             }
+         }
+         
+         return result;
+     }];
     
-    // to force KVO reload
-    self.runningApplications = self.runningApplications;
+    return array;
+}
+
+-(NSArray*) filter:(NSArray*)applications
+{
+    return applications;
 }
 
 -(NSComparisonResult) compareApplication1:(NSRunningApplication*)app1 application2:(NSRunningApplication*)app2 byKey:(NSString*)key

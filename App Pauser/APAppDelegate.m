@@ -14,13 +14,13 @@
 
 -(void) dealloc
 {
-    [self.dataSource removeObserver:self forKeyPath:NSStringFromSelector(@selector(runningApplications))];
+    [self.dataSource removeObserver:self forKeyPath:NSStringFromSelector(@selector(applications))];
 }
 
 -(void) applicationDidFinishLaunching:(NSNotification*)aNotification
 {
     self.dataSource = [[APProcessDataSource alloc] init];
-    [self.dataSource addObserver:self forKeyPath:NSStringFromSelector(@selector(runningApplications)) options:0 context:NULL];
+    [self.dataSource addObserver:self forKeyPath:NSStringFromSelector(@selector(applications)) options:0 context:NULL];
     [self.dataSource updateStatusForApplication:nil];
     self.table.dataSource = self.dataSource;
     
@@ -43,7 +43,7 @@
 
 -(void) observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
 {
-    if (object == self.dataSource && [keyPath isEqualToString:NSStringFromSelector(@selector(runningApplications))])
+    if (object == self.dataSource && [keyPath isEqualToString:NSStringFromSelector(@selector(applications))])
     {
         [self.table reloadData];
     }
@@ -55,7 +55,7 @@
     // TODO: can't stop current process
     
     NSInteger selectedRowIndex = [self.table selectedRow];
-    NSRunningApplication* application = self.dataSource.runningApplications[selectedRowIndex];
+    NSRunningApplication* application = self.dataSource.applications[selectedRowIndex];
     
     if (![application isTerminated])
     {
@@ -88,7 +88,7 @@
         return;
     }
     
-    NSRunningApplication* application = self.dataSource.runningApplications[rowIndex];
+    NSRunningApplication* application = self.dataSource.applications[rowIndex];
     
     if ([application isEqual:[NSRunningApplication currentApplication]])
     {
@@ -115,7 +115,7 @@
 
 -(NSView*)tableView:(NSTableView*)tableView viewForTableColumn:(NSTableColumn*)tableColumn row:(NSInteger)row
 {
-    NSRunningApplication* currentApplication = self.dataSource.runningApplications[row];
+    NSRunningApplication* currentApplication = self.dataSource.applications[row];
     BOOL applicationIsSuspended = [self.dataSource applicationIsSuspended:currentApplication];
     NSString* status = [self.dataSource applicationStatus:currentApplication];
     
