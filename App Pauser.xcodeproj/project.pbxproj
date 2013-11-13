@@ -14,23 +14,9 @@
 		4E3CF8A51831ECF7006B3201 /* APAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E3CF8A41831ECF7006B3201 /* APAppDelegate.m */; };
 		4E3CF8A81831ECF7006B3201 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4E3CF8A61831ECF7006B3201 /* MainMenu.xib */; };
 		4E3CF8AA1831ECF7006B3201 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E3CF8A91831ECF7006B3201 /* Images.xcassets */; };
-		4E3CF8B11831ECF7006B3201 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E3CF8B01831ECF7006B3201 /* XCTest.framework */; };
-		4E3CF8B21831ECF7006B3201 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E3CF8911831ECF7006B3201 /* Cocoa.framework */; };
-		4E3CF8BA1831ECF7006B3201 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4E3CF8B81831ECF7006B3201 /* InfoPlist.strings */; };
-		4E3CF8BC1831ECF7006B3201 /* App_PauserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E3CF8BB1831ECF7006B3201 /* App_PauserTests.m */; };
 		4E3CF8CD1832D0FB006B3201 /* APProcessDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E3CF8CC1832D0FB006B3201 /* APProcessDataSource.m */; };
-		4E3CF8D11832F144006B3201 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E3CF8D01832F144006B3201 /* QuartzCore.framework */; };
+		4E3CF8D31833F755006B3201 /* APSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4E3CF8D21833F755006B3201 /* APSettings.plist */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		4E3CF8B31831ECF7006B3201 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4E3CF8861831ECF7006B3201 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4E3CF88D1831ECF7006B3201;
-			remoteInfo = "App Pauser";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		4E3CF88E1831ECF7006B3201 /* App Pauser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "App Pauser.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -47,17 +33,11 @@
 		4E3CF8A41831ECF7006B3201 /* APAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = APAppDelegate.m; sourceTree = "<group>"; };
 		4E3CF8A71831ECF7006B3201 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		4E3CF8A91831ECF7006B3201 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		4E3CF8AF1831ECF7006B3201 /* App PauserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "App PauserTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E3CF8B01831ECF7006B3201 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		4E3CF8B71831ECF7006B3201 /* App PauserTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "App PauserTests-Info.plist"; sourceTree = "<group>"; };
-		4E3CF8B91831ECF7006B3201 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		4E3CF8BB1831ECF7006B3201 /* App_PauserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = App_PauserTests.m; sourceTree = "<group>"; };
 		4E3CF8C61831EE19006B3201 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
-		4E3CF8CA1832CA07006B3201 /* App Pauser.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "App Pauser.entitlements"; sourceTree = "<group>"; };
 		4E3CF8CB1832D0FB006B3201 /* APProcessDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APProcessDataSource.h; sourceTree = "<group>"; };
 		4E3CF8CC1832D0FB006B3201 /* APProcessDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APProcessDataSource.m; sourceTree = "<group>"; };
-		4E3CF8CE1832F13A006B3201 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		4E3CF8D01832F144006B3201 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		4E3CF8D21833F755006B3201 /* APSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APSettings.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,17 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4E3CF8D11832F144006B3201 /* QuartzCore.framework in Frameworks */,
 				4E3CF8921831ECF7006B3201 /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4E3CF8AC1831ECF7006B3201 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4E3CF8B21831ECF7006B3201 /* Cocoa.framework in Frameworks */,
-				4E3CF8B11831ECF7006B3201 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,7 +56,6 @@
 			isa = PBXGroup;
 			children = (
 				4E3CF8971831ECF7006B3201 /* App Pauser */,
-				4E3CF8B51831ECF7006B3201 /* App PauserTests */,
 				4E3CF8901831ECF7006B3201 /* Frameworks */,
 				4E3CF88F1831ECF7006B3201 /* Products */,
 			);
@@ -96,7 +65,6 @@
 			isa = PBXGroup;
 			children = (
 				4E3CF88E1831ECF7006B3201 /* App Pauser.app */,
-				4E3CF8AF1831ECF7006B3201 /* App PauserTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -104,8 +72,6 @@
 		4E3CF8901831ECF7006B3201 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4E3CF8D01832F144006B3201 /* QuartzCore.framework */,
-				4E3CF8CE1832F13A006B3201 /* CoreGraphics.framework */,
 				4E3CF8911831ECF7006B3201 /* Cocoa.framework */,
 				4E3CF8B01831ECF7006B3201 /* XCTest.framework */,
 				4E3CF8931831ECF7006B3201 /* Other Frameworks */,
@@ -126,7 +92,6 @@
 		4E3CF8971831ECF7006B3201 /* App Pauser */ = {
 			isa = PBXGroup;
 			children = (
-				4E3CF8CA1832CA07006B3201 /* App Pauser.entitlements */,
 				4E3CF8A31831ECF7006B3201 /* APAppDelegate.h */,
 				4E3CF8A41831ECF7006B3201 /* APAppDelegate.m */,
 				4E3CF8CB1832D0FB006B3201 /* APProcessDataSource.h */,
@@ -146,24 +111,7 @@
 				4E3CF89D1831ECF7006B3201 /* main.m */,
 				4E3CF89F1831ECF7006B3201 /* App Pauser-Prefix.pch */,
 				4E3CF8A01831ECF7006B3201 /* Credits.rtf */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		4E3CF8B51831ECF7006B3201 /* App PauserTests */ = {
-			isa = PBXGroup;
-			children = (
-				4E3CF8BB1831ECF7006B3201 /* App_PauserTests.m */,
-				4E3CF8B61831ECF7006B3201 /* Supporting Files */,
-			);
-			path = "App PauserTests";
-			sourceTree = "<group>";
-		};
-		4E3CF8B61831ECF7006B3201 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				4E3CF8B71831ECF7006B3201 /* App PauserTests-Info.plist */,
-				4E3CF8B81831ECF7006B3201 /* InfoPlist.strings */,
+				4E3CF8D21833F755006B3201 /* APSettings.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -188,24 +136,6 @@
 			productReference = 4E3CF88E1831ECF7006B3201 /* App Pauser.app */;
 			productType = "com.apple.product-type.application";
 		};
-		4E3CF8AE1831ECF7006B3201 /* App PauserTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4E3CF8C21831ECF7006B3201 /* Build configuration list for PBXNativeTarget "App PauserTests" */;
-			buildPhases = (
-				4E3CF8AB1831ECF7006B3201 /* Sources */,
-				4E3CF8AC1831ECF7006B3201 /* Frameworks */,
-				4E3CF8AD1831ECF7006B3201 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4E3CF8B41831ECF7006B3201 /* PBXTargetDependency */,
-			);
-			name = "App PauserTests";
-			productName = "App PauserTests";
-			productReference = 4E3CF8AF1831ECF7006B3201 /* App PauserTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -223,9 +153,6 @@
 							};
 						};
 					};
-					4E3CF8AE1831ECF7006B3201 = {
-						TestTargetID = 4E3CF88D1831ECF7006B3201;
-					};
 				};
 			};
 			buildConfigurationList = 4E3CF8891831ECF7006B3201 /* Build configuration list for PBXProject "App Pauser" */;
@@ -242,7 +169,6 @@
 			projectRoot = "";
 			targets = (
 				4E3CF88D1831ECF7006B3201 /* App Pauser */,
-				4E3CF8AE1831ECF7006B3201 /* App PauserTests */,
 			);
 		};
 /* End PBXProject section */
@@ -256,14 +182,7 @@
 				4E3CF8AA1831ECF7006B3201 /* Images.xcassets in Resources */,
 				4E3CF8A21831ECF7006B3201 /* Credits.rtf in Resources */,
 				4E3CF8A81831ECF7006B3201 /* MainMenu.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4E3CF8AD1831ECF7006B3201 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4E3CF8BA1831ECF7006B3201 /* InfoPlist.strings in Resources */,
+				4E3CF8D31833F755006B3201 /* APSettings.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,23 +199,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4E3CF8AB1831ECF7006B3201 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4E3CF8BC1831ECF7006B3201 /* App_PauserTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		4E3CF8B41831ECF7006B3201 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4E3CF88D1831ECF7006B3201 /* App Pauser */;
-			targetProxy = 4E3CF8B31831ECF7006B3201 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		4E3CF89A1831ECF7006B3201 /* InfoPlist.strings */ = {
@@ -322,14 +225,6 @@
 				4E3CF8C61831EE19006B3201 /* en */,
 			);
 			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-		4E3CF8B81831ECF7006B3201 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4E3CF8B91831ECF7006B3201 /* en */,
-			);
-			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -431,46 +326,6 @@
 			};
 			name = Release;
 		};
-		4E3CF8C31831ECF7006B3201 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/App Pauser.app/Contents/MacOS/App Pauser";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "App Pauser/App Pauser-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "App PauserTests/App PauserTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		4E3CF8C41831ECF7006B3201 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/App Pauser.app/Contents/MacOS/App Pauser";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "App Pauser/App Pauser-Prefix.pch";
-				INFOPLIST_FILE = "App PauserTests/App PauserTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -488,14 +343,6 @@
 			buildConfigurations = (
 				4E3CF8C01831ECF7006B3201 /* Debug */,
 				4E3CF8C11831ECF7006B3201 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-		};
-		4E3CF8C21831ECF7006B3201 /* Build configuration list for PBXNativeTarget "App PauserTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4E3CF8C31831ECF7006B3201 /* Debug */,
-				4E3CF8C41831ECF7006B3201 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

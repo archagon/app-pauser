@@ -13,6 +13,7 @@
 // TODO: laggy scrolling -- Activity Monitor doesn't lag
 // TODO: more accurate energy, in terms of maximum possible spending
 // TODO: adjust energy whenever apps are added, closed, or paused
+// TODO: taskbar drop-down icon
 
 #import <Cocoa/Cocoa.h>
 #import "APProcessDataSource.h"
