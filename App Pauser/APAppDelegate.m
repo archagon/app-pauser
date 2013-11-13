@@ -46,7 +46,6 @@
     if (object == self.dataSource && [keyPath isEqualToString:NSStringFromSelector(@selector(runningApplications))])
     {
         [self.table reloadData];
-        // TODO: select first row
     }
 }
 
@@ -157,32 +156,35 @@
     }
     else if ([[tableColumn identifier] isEqualToString:@"status"])
     {
-        //http://manpages.ubuntu.com/manpages/intrepid/man1/ps.1.html
-        //D    Uninterruptible sleep (usually IO)
-        //R    Running or runnable (on run queue)
-        //S    Interruptible sleep (waiting for an event to complete)
-        //T    Stopped, either by a job control signal or because it is being traced.
-        //W    paging (not valid since the 2.6.xx kernel)
-        //X    dead (should never be seen)
-        //Z    Defunct ("zombie") process, terminated but not reaped by its parent.
-        
-        if ([[status substringToIndex:1] isEqualToString:@"D"] ||
-            [[status substringToIndex:1] isEqualToString:@"S"])
+        //https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/ps.1.html
+        //I       Marks a process that is idle (sleeping for longer than about 20 seconds).
+        //R       Marks a runnable process.
+        //S       Marks a process that is sleeping for less than about 20 seconds.
+        //T       Marks a stopped process.
+        //U       Marks a process in uninterruptible wait.
+        //Z       Marks a dead process (a ``zombie'').
+    
+        if ([[status substringToIndex:1] isEqualToString:@"I"] ||
+            [[status substringToIndex:1] isEqualToString:@"S"] ||
+            [[status substringToIndex:1] isEqualToString:@"U"])
         {
             status = [@"❎ " stringByAppendingString:status];
         }
         else if ([[status substringToIndex:1] isEqualToString:@"R"])
         {
-            status = [@"✅ " stringByAppendingString:status];
+            status = [@"▶️ " stringByAppendingString:status];
         }
         else if ([[status substringToIndex:1] isEqualToString:@"T"])
         {
             status = [@"💤 " stringByAppendingString:status];
         }
-        else if ([[status substringToIndex:1] isEqualToString:@"X"] ||
-                 [[status substringToIndex:1] isEqualToString:@"Z"])
+        else if ([[status substringToIndex:1] isEqualToString:@"Z"])
         {
-            status = [@"⛔️ " stringByAppendingString:status];
+            status = [@"🆘 " stringByAppendingString:status];
+        }
+        else
+        {
+            status = [@"⁉️ " stringByAppendingString:status];
         }
         
         [cellView.imageView setHidden:YES];

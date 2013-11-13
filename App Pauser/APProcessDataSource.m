@@ -14,6 +14,7 @@
 @property (nonatomic, retain) NSMutableDictionary* processIDToCPUTime;
 @property (nonatomic, retain) NSTask* topTask;
 @property (nonatomic, retain) NSMutableDictionary* cachedProcessIDsToStatuses;
+@property (nonatomic, retain) NSArray* cachedSortDescriptors;
 @property (nonatomic, retain) NSRegularExpression* topTaskRegex;
 @property (nonatomic, retain) NSRegularExpression* psRegex;
 
@@ -88,7 +89,9 @@
 
 -(void) updateRunningApplications
 {
-    self.runningApplications = [NSMutableArray arrayWithArray:[[NSWorkspace sharedWorkspace] runningApplications]];
+    // why do it like this? so that any KVO observers don't get two messages
+    _runningApplications = [NSMutableArray arrayWithArray:[[NSWorkspace sharedWorkspace] runningApplications]];
+    [self tableView:nil sortDescriptorsDidChange:self.cachedSortDescriptors];
     
     for (NSRunningApplication* runningApplication in self.runningApplications)
     {
@@ -236,11 +239,16 @@
 
 - (void)tableView:(NSTableView*)tableView sortDescriptorsDidChange:(NSArray*)oldDescriptors
 {
+    if (tableView != nil)
+    {
+        self.cachedSortDescriptors = [tableView sortDescriptors];
+    }
+    
     [self.runningApplications sortUsingComparator:^NSComparisonResult(id obj1, id obj2)
     {
         NSComparisonResult result = NSOrderedSame;
         
-        for (NSSortDescriptor* descriptor in tableView.sortDescriptors)
+        for (NSSortDescriptor* descriptor in self.cachedSortDescriptors)
         {
             result = [self compareApplication1:obj1 application2:obj2 byKey:[descriptor key]];
             
