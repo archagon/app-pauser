@@ -337,6 +337,9 @@
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </searchFieldCell>
+                        <connections>
+                            <outlet property="delegate" destination="494" id="wBJ-Lq-AHQ"/>
+                        </connections>
                     </searchField>
                 </subviews>
                 <constraints>
@@ -355,6 +358,7 @@
         <customObject id="494" customClass="APAppDelegate">
             <connections>
                 <outlet property="button" destination="TBh-re-M1f" id="dn3-4d-ONy"/>
+                <outlet property="searchField" destination="1Wn-au-6Ue" id="QuW-uZ-gAE"/>
                 <outlet property="table" destination="35j-lw-KKj" id="pL3-dp-Rw3"/>
                 <outlet property="window" destination="371" id="532"/>
             </connections>

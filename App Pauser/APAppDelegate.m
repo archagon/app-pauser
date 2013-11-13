@@ -19,6 +19,8 @@
 
 -(void) applicationDidFinishLaunching:(NSNotification*)aNotification
 {
+    self.searchField.currentEditor.delegate = self;
+    
     self.dataSource = [[APProcessDataSource alloc] init];
     [self.dataSource addObserver:self forKeyPath:NSStringFromSelector(@selector(applications)) options:0 context:NULL];
     [self.dataSource updateStatusForApplication:nil];
@@ -115,6 +117,11 @@
 
 -(NSView*)tableView:(NSTableView*)tableView viewForTableColumn:(NSTableColumn*)tableColumn row:(NSInteger)row
 {
+    if ([self.dataSource.applications count] == 0)
+    {
+        return nil;
+    }
+    
     NSRunningApplication* currentApplication = self.dataSource.applications[row];
     BOOL applicationIsSuspended = [self.dataSource applicationIsSuspended:currentApplication];
     NSString* status = [self.dataSource applicationStatus:currentApplication];
@@ -193,6 +200,11 @@
     }
     
     return cellView;
+}
+
+-(void) textDidChange:(NSNotification*)notification
+{
+    self.dataSource.filter = self.searchField.currentEditor.string;
 }
 
 @end

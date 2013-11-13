@@ -19,6 +19,8 @@
 @property (nonatomic, retain) NSRegularExpression* topTaskRegex;
 @property (nonatomic, retain) NSRegularExpression* psRegex;
 
+-(void) updateRunningApplications;
+
 @end
 
 @implementation APProcessDataSource
@@ -91,10 +93,9 @@
 
 -(void) updateRunningApplications
 {
-    // why do it like this? so that any KVO observers don't get two messages
     self.runningApplications = [NSArray arrayWithArray:[[NSWorkspace sharedWorkspace] runningApplications]];
-    NSArray* filteredApplications = [self filter:self.runningApplications];
-    NSArray* sortedApplications = [self sort:filteredApplications WithSortDescriptors:self.cachedSortDescriptors];
+    NSArray* filteredApplications = [self filter:self.runningApplications withFilter:self.filter];
+    NSArray* sortedApplications = [self sort:filteredApplications withSortDescriptors:self.cachedSortDescriptors];
     self.applications = sortedApplications;
     
     for (NSRunningApplication* runningApplication in self.runningApplications)
@@ -230,7 +231,7 @@
     }
 }
 
--(CGFloat) getCPUTimeForProcess:(pid_t)process
+-(CGFloat) getCPUTimeForApplication:(NSRunningApplication*)application
 {
     //    NSLog(@"%d is running? %d", process, [task isRunning]);
     return 0.5f;
@@ -240,7 +241,7 @@
 
 -(NSInteger) numberOfRowsInTableView:(NSTableView*)tableView
 {
-    return [self.runningApplications count];
+    return [self.applications count];
 }
 
 - (void)tableView:(NSTableView*)tableView sortDescriptorsDidChange:(NSArray*)oldDescriptors
@@ -255,7 +256,13 @@
 
 #pragma mark - Sorting and Filtering
 
--(NSArray*) sort:(NSArray*)applications WithSortDescriptors:(NSArray*)sortDescriptors
+-(void) setFilter:(NSString*)filter
+{
+    _filter = filter;
+    [self updateRunningApplications];
+}
+
+-(NSArray*) sort:(NSArray*)applications withSortDescriptors:(NSArray*)sortDescriptors
 {
     NSMutableArray* array = [NSMutableArray arrayWithArray:applications];
     [array sortUsingComparator:^NSComparisonResult(id obj1, id obj2)
@@ -279,9 +286,41 @@
     return array;
 }
 
--(NSArray*) filter:(NSArray*)applications
+// TODO: this should probably use an NSPredicate, but whatever
+-(NSArray*) filter:(NSArray*)applications withFilter:(NSString*)filter
 {
-    return applications;
+    if ([filter length] == 0)
+    {
+        return applications;
+    }
+    
+    NSMutableArray* newArray = [NSMutableArray array];
+    filter = [filter uppercaseString];
+    
+    for (NSRunningApplication* application in applications)
+    {
+        NSString* appName = [[application localizedName] uppercaseString];
+        NSUInteger filterIndex = 0;
+        
+        for (NSUInteger i = 0; i < [appName length]; i++)
+        {
+            char filterChar = [filter characterAtIndex:filterIndex];
+            char appChar = [appName characterAtIndex:i];
+            
+            if (filterChar == appChar)
+            {
+                filterIndex++;
+                
+                if (filterIndex == [filter length])
+                {
+                    [newArray addObject:application];
+                    break;
+                }
+            }
+        }
+    }
+    
+    return newArray;
 }
 
 -(NSComparisonResult) compareApplication1:(NSRunningApplication*)app1 application2:(NSRunningApplication*)app2 byKey:(NSString*)key

@@ -11,11 +11,12 @@
 @interface APProcessDataSource : NSObject <NSTableViewDataSource>
 
 @property (nonatomic, retain, readonly) NSArray* applications; // KVO-observe me!
+@property (nonatomic, retain) NSString* filter;
 
--(void) updateRunningApplications;
 -(CGFloat) getCPUTimeForApplication:(NSRunningApplication*)application;
 -(BOOL) suspend:(BOOL)suspend application:(NSRunningApplication*)application; // auto updates status
 
+// status notifications aren't provided by the OS, so we have to be a little kludgy
 -(BOOL) applicationIsSuspended:(NSRunningApplication*)application;
 -(NSString*) applicationStatus:(NSRunningApplication*)application;
 -(void) updateStatusForApplication:(NSRunningApplication*)application; // nil for all applications

@@ -15,11 +15,12 @@
 #import <Cocoa/Cocoa.h>
 #import "APProcessDataSource.h"
 
-@interface APAppDelegate : NSObject <NSApplicationDelegate, NSTableViewDelegate>
+@interface APAppDelegate : NSObject <NSApplicationDelegate, NSTableViewDelegate, NSTextDelegate>
 
 @property (assign) IBOutlet NSWindow* window;
 @property (assign) IBOutlet NSTableView* table;
 @property (assign) IBOutlet NSButton* button;
+@property (assign) IBOutlet NSSearchField* searchField;
 @property (nonatomic, retain) APProcessDataSource* dataSource;
 
 -(IBAction) buttonPushed:(id)sender;
