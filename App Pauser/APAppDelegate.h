@@ -8,9 +8,11 @@
 
 // TODO: search filter
 // TODO: sorting
-// TODO: actually check if paused, especially on launch!
 // TODO: gather all NSTasks to cancel if quit
 // TODO: make sure quitting works as intended
+// TODO: laggy scrolling -- Activity Monitor doesn't lag
+// TODO: more accurate energy, in terms of maximum possible spending
+// TODO: adjust energy whenever apps are added, closed, or paused
 
 #import <Cocoa/Cocoa.h>
 #import "APProcessDataSource.h"

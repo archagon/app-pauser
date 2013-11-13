@@ -117,6 +117,7 @@
     // capture output data from pipe
     NSData* outputData = [[statusTask.standardOutput fileHandleForReading] readDataToEndOfFile];
     NSString* outputString = [[NSString alloc] initWithData:outputData encoding:NSUTF8StringEncoding];
+    CGFloat totalMeasuredLoad = 0;
     
     // process output data
     NSArray* matches = [self.psCPURegex matchesInString:outputString options:0 range:NSMakeRange(0, [outputString length])];
@@ -127,21 +128,24 @@
         
         if (self.currentProcessIDsToCPU[processID])
         {
+            CGFloat cpuValue = [cpu doubleValue];
+            
             self.currentProcessIDsToCPU[processID] = cpu;
             
             if (self.processIDsToEnergy[processID])
             {
-                self.processIDsToEnergy[processID] = @([self.processIDsToEnergy[processID] doubleValue] + [cpu doubleValue]);
+                self.processIDsToEnergy[processID] = @([self.processIDsToEnergy[processID] doubleValue] + cpuValue);
             }
             else
             {
                 self.processIDsToEnergy[processID] = @0;
             }
             
-            self.totalEnergy += [cpu doubleValue];
+            totalMeasuredLoad += cpuValue;
         }
     }
     
+    self.totalEnergy += 100;
     self.cpuTimeUpdateTick++;
 }
 
