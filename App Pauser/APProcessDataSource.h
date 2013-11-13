@@ -11,9 +11,11 @@
 @interface APProcessDataSource : NSObject <NSTableViewDataSource>
 
 @property (nonatomic, retain, readonly) NSArray* applications; // KVO-observe me!
+@property (nonatomic, assign, readonly) NSInteger cpuTimeUpdateTick; // KVO-observe me!
 @property (nonatomic, retain) NSString* filter;
 
--(CGFloat) getCPUTimeForApplication:(NSRunningApplication*)application;
+-(NSString*) CPUTimeForApplication:(NSRunningApplication*)application;
+-(CGFloat) energyForApplication:(NSRunningApplication*)application;
 -(BOOL) suspend:(BOOL)suspend application:(NSRunningApplication*)application; // auto updates status
 
 // status notifications aren't provided by the OS, so we have to be a little kludgy

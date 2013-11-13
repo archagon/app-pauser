@@ -15,6 +15,7 @@
 -(void) dealloc
 {
     [self.dataSource removeObserver:self forKeyPath:NSStringFromSelector(@selector(applications))];
+    [self.dataSource removeObserver:self forKeyPath:NSStringFromSelector(@selector(cpuTimeUpdateTick))];
 }
 
 -(void) applicationDidFinishLaunching:(NSNotification*)aNotification
@@ -23,6 +24,7 @@
     
     self.dataSource = [[APProcessDataSource alloc] init];
     [self.dataSource addObserver:self forKeyPath:NSStringFromSelector(@selector(applications)) options:0 context:NULL];
+    [self.dataSource addObserver:self forKeyPath:NSStringFromSelector(@selector(cpuTimeUpdateTick)) options:NSKeyValueObservingOptionInitial context:NULL];
     [self.dataSource updateStatusForApplication:nil];
     self.table.dataSource = self.dataSource;
     
@@ -37,6 +39,8 @@
             [self.table setSortDescriptors:[NSArray arrayWithObject:[column sortDescriptorPrototype]]];
         }
     }
+    
+    [self.table setAllowsTypeSelect:NO]; // too slow with button label changes, figure out later
 }
 
 -(void) applicationWillTerminate:(NSNotification*)notification
@@ -45,9 +49,20 @@
 
 -(void) observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
 {
-    if (object == self.dataSource && [keyPath isEqualToString:NSStringFromSelector(@selector(applications))])
+    if (object == self.dataSource)
     {
-        [self.table reloadData];
+        if ([keyPath isEqualToString:NSStringFromSelector(@selector(applications))])
+        {
+            [self.table reloadData];
+        }
+        else if ([keyPath isEqualToString:NSStringFromSelector(@selector(cpuTimeUpdateTick))])
+        {
+            NSIndexSet* allRows = [[NSIndexSet alloc] initWithIndexesInRange:NSMakeRange(0, [self.table numberOfRows])];
+            NSMutableIndexSet* cpuColumn = [NSMutableIndexSet indexSet];
+            [cpuColumn addIndex:[self.table columnWithIdentifier:@"cpu"]];
+            [cpuColumn addIndex:[self.table columnWithIdentifier:@"energy"]];
+            [self.table reloadDataForRowIndexes:allRows columnIndexes:cpuColumn];
+        }
     }
 }
 
@@ -144,22 +159,29 @@
     }
     else if ([[tableColumn identifier] isEqualToString:@"cpu"])
     {
-        cellView.textField.stringValue = @"";
+        cellView.textField.stringValue = [self.dataSource CPUTimeForApplication:currentApplication];
         cellView.textField.textColor = (applicationIsSuspended ? [NSColor grayColor] : [NSColor blackColor]);
         cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
     }
     else if ([[tableColumn identifier] isEqualToString:@"energy"])
     {
-//        if (self.processIDToCPUTime[@([currentApplication processIdentifier])])
-//        {
-//            cellView.textField.stringValue = self.processIDToCPUTime[@([currentApplication processIdentifier])];
-//        }
-//        else
-//        {
-            cellView.textField.stringValue = @"";
-//        }
-        cellView.textField.textColor = (applicationIsSuspended ? [NSColor grayColor] : [NSColor blackColor]);
+        CGFloat energy = [self.dataSource energyForApplication:currentApplication];
+        
+        cellView.textField.stringValue = [NSString stringWithFormat:@"%.1f", energy * 100];
         cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
+        
+        if (energy < 0.1f)
+        {
+            cellView.textField.textColor = [NSColor blackColor];
+        }
+        else if (energy < 0.25f)
+        {
+            cellView.textField.textColor = [NSColor orangeColor];
+        }
+        else
+        {
+            cellView.textField.textColor = [NSColor redColor];
+        }
     }
     else if ([[tableColumn identifier] isEqualToString:@"status"])
     {

@@ -12,12 +12,17 @@
 
 @property (nonatomic, retain) NSArray* runningApplications;
 @property (nonatomic, retain, readwrite) NSArray* applications;
-@property (nonatomic, retain) NSMutableDictionary* processIDToCPUTime;
+@property (nonatomic, assign, readwrite) NSInteger cpuTimeUpdateTick;
 @property (nonatomic, retain) NSTask* topTask;
 @property (nonatomic, retain) NSMutableDictionary* cachedProcessIDsToStatuses;
+@property (nonatomic, retain) NSMutableDictionary* currentProcessIDsToCPU;
 @property (nonatomic, retain) NSArray* cachedSortDescriptors;
 @property (nonatomic, retain) NSRegularExpression* topTaskRegex;
 @property (nonatomic, retain) NSRegularExpression* psRegex;
+@property (nonatomic, retain) NSRegularExpression* psCPURegex;
+@property (nonatomic, retain) NSTimer* CPUUpdateTimer;
+@property (nonatomic, retain) NSMutableDictionary* processIDsToEnergy;
+@property (nonatomic, assign) CGFloat totalEnergy;
 
 -(void) updateRunningApplications;
 
@@ -29,6 +34,7 @@
 {
     [[NSWorkspace sharedWorkspace] removeObserver:self forKeyPath:NSStringFromSelector(@selector(runningApplications))];
     [self.topTask interrupt];
+    [self.CPUUpdateTimer invalidate];
 }
 
 -(id) init
@@ -38,7 +44,7 @@
     {
         self.runningApplications = [NSArray array];
         self.applications = [NSArray array];
-        self.processIDToCPUTime = [NSMutableDictionary dictionary];
+        self.processIDsToEnergy = [NSMutableDictionary dictionary];
 
         self.topTaskRegex = [NSRegularExpression regularExpressionWithPattern:@"\\s*(\\d+)\\s+(\\d+\\.\\d+)\\s*"
                                                                       options:0
@@ -46,37 +52,11 @@
         self.psRegex = [NSRegularExpression regularExpressionWithPattern:@"\\n[^\\n]*?\\s*(\\d+)\\s+([a-zA-Z]+)\\s*\\n"
                                                                                options:0
                                                                                  error:NULL];
+        self.psCPURegex = [NSRegularExpression regularExpressionWithPattern:@"\\n[^\\n]*?\\s*(\\d+)\\s+(\\d+.\\d+)\\s*\\n"
+                                                                    options:0
+                                                                      error:NULL];
         
-//
-//        self.topTask = [[NSTask alloc] init];
-//        [self.topTask setLaunchPath:@"/usr/bin/top"];
-//        //    NSArray* arguments = [NSArray arrayWithObjects: @"-s", @"1",@"-l",@"3600",@"-stats",@"pid,cpu", nil];
-//        NSArray* arguments = [NSArray arrayWithObjects:@"-l", @"3600", @"-stats", @"pid,cpu", nil];
-//        [self.topTask setArguments:arguments];
-//        
-//        NSPipe* standardOutputPipe = [NSPipe pipe];
-//        self.topTask.standardOutput = standardOutputPipe;
-//        //    [self.topTask launch];
-//        
-//        [[self.topTask.standardOutput fileHandleForReading] setReadabilityHandler:^(NSFileHandle* file)
-//         {
-//             NSData* topData = [file availableData];
-//             NSString* topString = [[NSString alloc] initWithData:topData encoding:NSUTF8StringEncoding];
-//             NSArray* matches = [self.topTaskRegex matchesInString:topString options:0 range:NSMakeRange(0, [topString length])];
-//             
-//             for (NSTextCheckingResult* match in matches)
-//             {
-//                 NSString* processID = [topString substringWithRange:[match rangeAtIndex:1]];
-//                 NSString* CPUTime = [topString substringWithRange:[match rangeAtIndex:2]];
-//                 
-//                 if (self.processIDToCPUTime[processID])
-//                 {
-//                     self.processIDToCPUTime[processID] = CPUTime;
-//                 }
-//             }
-//             
-//             //        [self.table reloadData];
-//         }];
+        self.CPUUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(updateCPU) userInfo:nil repeats:YES];
         
         [[NSWorkspace sharedWorkspace] addObserver:self forKeyPath:NSStringFromSelector(@selector(runningApplications)) options:NSKeyValueObservingOptionInitial context:NULL];
     }
@@ -85,9 +65,12 @@
 
 -(void) observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
 {
-    if (object == [NSWorkspace sharedWorkspace] && [keyPath isEqualToString:NSStringFromSelector(@selector(runningApplications))])
+    if (object == [NSWorkspace sharedWorkspace])
     {
-        [self updateRunningApplications];
+        if ([keyPath isEqualToString:NSStringFromSelector(@selector(runningApplications))])
+        {
+            [self updateRunningApplications];
+        }
     }
 }
 
@@ -100,8 +83,66 @@
     
     for (NSRunningApplication* runningApplication in self.runningApplications)
     {
-        self.processIDToCPUTime[@([runningApplication processIdentifier])] = @"0.0";
+        NSString* pidKey = [NSString stringWithFormat:@"%d", [runningApplication processIdentifier]];
+        if (!self.processIDsToEnergy[pidKey])
+        {
+            self.processIDsToEnergy[pidKey] = @0;
+        }
     }
+}
+
+-(void) updateCPU
+{
+    self.currentProcessIDsToCPU = [NSMutableDictionary dictionary];
+    
+    for (NSRunningApplication* application in self.runningApplications)
+    {
+        NSString* pidKey = [NSString stringWithFormat:@"%d", [application processIdentifier]];
+        self.currentProcessIDsToCPU[pidKey] = @"0.0";
+    }
+    
+    // launch ps task
+    NSTask* statusTask = [[NSTask alloc] init];
+    [statusTask setLaunchPath:@"/bin/ps"];
+    NSArray* arguments = arguments = [NSArray arrayWithObjects:@"aux", @"-o", @"pid,%cpu", nil];
+    [statusTask setArguments:arguments];
+    statusTask.standardOutput = [NSPipe pipe];
+    [statusTask launch];
+    [statusTask waitUntilExit];
+    
+    // make sure exit status is OK
+    int terminationStatus = [statusTask terminationStatus];
+    NSAssert(terminationStatus == 0, @"ps returned with a termination status of %d", terminationStatus);
+    
+    // capture output data from pipe
+    NSData* outputData = [[statusTask.standardOutput fileHandleForReading] readDataToEndOfFile];
+    NSString* outputString = [[NSString alloc] initWithData:outputData encoding:NSUTF8StringEncoding];
+    
+    // process output data
+    NSArray* matches = [self.psCPURegex matchesInString:outputString options:0 range:NSMakeRange(0, [outputString length])];
+    for (NSTextCheckingResult* match in matches)
+    {
+        NSString* processID = [outputString substringWithRange:[match rangeAtIndex:1]];
+        NSString* cpu = [outputString substringWithRange:[match rangeAtIndex:2]];
+        
+        if (self.currentProcessIDsToCPU[processID])
+        {
+            self.currentProcessIDsToCPU[processID] = cpu;
+            
+            if (self.processIDsToEnergy[processID])
+            {
+                self.processIDsToEnergy[processID] = @([self.processIDsToEnergy[processID] doubleValue] + [cpu doubleValue]);
+            }
+            else
+            {
+                self.processIDsToEnergy[processID] = @0;
+            }
+            
+            self.totalEnergy += [cpu doubleValue];
+        }
+    }
+    
+    self.cpuTimeUpdateTick++;
 }
 
 -(BOOL) suspend:(BOOL)suspend application:(NSRunningApplication*)application
@@ -231,10 +272,32 @@
     }
 }
 
--(CGFloat) getCPUTimeForApplication:(NSRunningApplication*)application
+-(NSString*) CPUTimeForApplication:(NSRunningApplication*)application
 {
-    //    NSLog(@"%d is running? %d", process, [task isRunning]);
-    return 0.5f;
+    NSString* pidKey = [NSString stringWithFormat:@"%d", [application processIdentifier]];
+    
+    if (self.currentProcessIDsToCPU[pidKey])
+    {
+        return self.currentProcessIDsToCPU[pidKey];
+    }
+    else
+    {
+        return @"0.0";
+    }
+}
+
+-(CGFloat) energyForApplication:(NSRunningApplication*)application
+{
+    NSString* pidKey = [NSString stringWithFormat:@"%d", [application processIdentifier]];
+    
+    if (!self.processIDsToEnergy[pidKey] || self.totalEnergy == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return ([self.processIDsToEnergy[pidKey] doubleValue] / self.totalEnergy);
+    }
 }
 
 #pragma mark NSTableViewDataSource

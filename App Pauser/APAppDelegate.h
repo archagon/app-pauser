@@ -21,6 +21,7 @@
 @property (assign) IBOutlet NSTableView* table;
 @property (assign) IBOutlet NSButton* button;
 @property (assign) IBOutlet NSSearchField* searchField;
+
 @property (nonatomic, retain) APProcessDataSource* dataSource;
 
 -(IBAction) buttonPushed:(id)sender;
