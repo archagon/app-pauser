@@ -23,6 +23,18 @@
     [self.dataSource addObserver:self forKeyPath:NSStringFromSelector(@selector(runningApplications)) options:0 context:NULL];
     [self.dataSource updateStatusForApplication:nil];
     self.table.dataSource = self.dataSource;
+    
+    for (NSTableColumn* column in [self.table tableColumns])
+    {
+        NSString* columnID = [column identifier];
+        NSSortDescriptor* sortDescriptor = [[NSSortDescriptor alloc] initWithKey:columnID ascending:YES];
+        [column setSortDescriptorPrototype:sortDescriptor];
+        
+        if ([[self.table sortDescriptors] count] == 0)
+        {
+            [self.table setSortDescriptors:[NSArray arrayWithObject:[column sortDescriptorPrototype]]];
+        }
+    }
 }
 
 -(void) applicationWillTerminate:(NSNotification*)notification

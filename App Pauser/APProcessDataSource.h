@@ -10,7 +10,7 @@
 
 @interface APProcessDataSource : NSObject <NSTableViewDataSource>
 
-@property (nonatomic, retain, readonly) NSArray* runningApplications; // KVO-observe me!
+@property (nonatomic, retain, readonly) NSMutableArray* runningApplications; // KVO-observe me!
 
 -(void) updateRunningApplications;
 -(CGFloat) getCPUTimeForApplication:(NSRunningApplication*)application;

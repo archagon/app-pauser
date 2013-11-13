@@ -10,7 +10,7 @@
 
 @interface APProcessDataSource ()
 
-@property (nonatomic, retain, readwrite) NSArray* runningApplications;
+@property (nonatomic, retain, readwrite) NSMutableArray* runningApplications;
 @property (nonatomic, retain) NSMutableDictionary* processIDToCPUTime;
 @property (nonatomic, retain) NSTask* topTask;
 @property (nonatomic, retain) NSMutableDictionary* cachedProcessIDsToStatuses;
@@ -88,7 +88,7 @@
 
 -(void) updateRunningApplications
 {
-    self.runningApplications = [NSArray arrayWithArray:[[NSWorkspace sharedWorkspace] runningApplications]];
+    self.runningApplications = [NSMutableArray arrayWithArray:[[NSWorkspace sharedWorkspace] runningApplications]];
     
     for (NSRunningApplication* runningApplication in self.runningApplications)
     {
@@ -232,6 +232,52 @@
 -(NSInteger) numberOfRowsInTableView:(NSTableView*)tableView
 {
     return [self.runningApplications count];
+}
+
+- (void)tableView:(NSTableView*)tableView sortDescriptorsDidChange:(NSArray*)oldDescriptors
+{
+    [self.runningApplications sortUsingComparator:^NSComparisonResult(id obj1, id obj2)
+    {
+        NSComparisonResult result = NSOrderedSame;
+        
+        for (NSSortDescriptor* descriptor in tableView.sortDescriptors)
+        {
+            result = [self compareApplication1:obj1 application2:obj2 byKey:[descriptor key]];
+            
+            if (result != NSOrderedSame)
+            {
+                result *= ([descriptor ascending] ? 1 : -1);
+                break;
+            }
+        }
+        
+        return result;
+    }];
+    
+    // to force KVO reload
+    self.runningApplications = self.runningApplications;
+}
+
+-(NSComparisonResult) compareApplication1:(NSRunningApplication*)app1 application2:(NSRunningApplication*)app2 byKey:(NSString*)key
+{
+    if ([key isEqualToString:@"name"])
+    {
+         return [[app1 localizedName] compare:[app2 localizedName]];
+    }
+    else if ([key isEqualToString:@"pid"])
+    {
+         return [@([app1 processIdentifier]) compare:@([app2 processIdentifier])];
+    }
+    else if ([key isEqualToString:@"status"])
+    {
+        NSString* status1 = [self applicationStatus:app1];
+        NSString* status2 = [self applicationStatus:app2];
+        return [status1 compare:status2];
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 @end
