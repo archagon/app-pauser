@@ -12,6 +12,7 @@
 // TODO: query
 // TODO: resizing behavior
 // TODO: filter high energy use
+// TODO: real-time updating of filter, sort, etc.
 
 // optimizations:
 // TODO: very slow filtering and sorting
