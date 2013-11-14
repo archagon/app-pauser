@@ -86,15 +86,26 @@
 -(void) updateProcessIDs
 {
     NSArray* runningApplications = [[NSWorkspace sharedWorkspace] runningApplications];
-    [self.BSDProcessList refreshProcessList];
-    NSMutableArray* processIDs = [NSMutableArray arrayWithArray:[self.BSDProcessList processIDs]];
-    
+    NSMutableArray* processIDs = [NSMutableArray array];
     self.processIDsToApplications = [NSMutableDictionary dictionary];
     
+    // first, gather the NSWorkspace applications
     for (NSRunningApplication* application in runningApplications)
     {
         [processIDs addObject:@([application processIdentifier])];
         self.processIDsToApplications[@([application processIdentifier])] = application;
+    }
+    
+    [self.BSDProcessList refreshProcessList];
+    NSArray* BSDprocessIDs = [self.BSDProcessList processIDs];
+    
+    // next, gather the BSD processes
+    for (NSNumber* processID in BSDprocessIDs)
+    {
+        if (!self.processIDsToApplications[processID])
+        {
+            [processIDs addObject:processID];
+        }
     }
     
     NSArray* filteredApplications = [self filter:processIDs withFilter:self.filter];
