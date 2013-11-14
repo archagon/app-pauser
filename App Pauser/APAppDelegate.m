@@ -18,6 +18,13 @@
 
 @end
 
+@interface APAppDelegate ()
+
+@property (nonatomic, retain) NSColor* cachedRowColor1;
+@property (nonatomic, retain) NSColor* cachedRowColor2;
+
+@end
+
 @implementation APAppDelegate
 
 // TODO: notifications, etc.
@@ -177,38 +184,54 @@
         cellView.textField.textColor = (applicationIsSuspended ? [NSColor grayColor] : [NSColor blackColor]);
         cellView.imageView.image = [self.dataSource imageForProcess:processID];
         cellView.imageView.alphaValue = (applicationIsSuspended ? 0.5f : 1.0f);
-        cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
     }
     else if ([[tableColumn identifier] isEqualToString:@"pid"])
     {
         cellView.textField.stringValue = [NSString stringWithFormat:@"%d", processID];
         cellView.textField.textColor = (applicationIsSuspended ? [NSColor grayColor] : [NSColor blackColor]);
-        cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
     }
     else if ([[tableColumn identifier] isEqualToString:@"cpu"])
     {
         cellView.textField.stringValue = [NSString stringWithFormat:@"%.1f", [self.dataSource CPUTimeForProcess:processID]];
         cellView.textField.textColor = (applicationIsSuspended ? [NSColor grayColor] : [NSColor blackColor]);
-        cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
     }
     else if ([[tableColumn identifier] isEqualToString:@"energy"])
     {
         CGFloat energy = [self.dataSource energyForProcess:processID];
         
         cellView.textField.stringValue = [NSString stringWithFormat:@"%.1f", energy * 100];
-        cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
+        
+        NSColor* rowBackgroundColor = [[tableView rowViewAtRow:row makeIfNecessary:NO] backgroundColor];
+        
+        if (!self.cachedRowColor1)
+        {
+            self.cachedRowColor1 = rowBackgroundColor;
+        }
+        else if (!self.cachedRowColor2 && ![rowBackgroundColor isEqualTo:self.cachedRowColor1])
+        {
+            self.cachedRowColor2 = rowBackgroundColor;
+        }
         
         if (energy < [[APSettings settingForKeyPath:@"energythreshholds.medium"] doubleValue])
         {
             cellView.textField.textColor = [NSColor blackColor];
+            NSInteger rowModulo = (row + 1) % 2;
+            NSColor* rowColor = (rowModulo % 2 ? self.cachedRowColor1 : self.cachedRowColor2);
+            
+            if (![rowBackgroundColor isEqualTo:rowColor])
+            {
+                [[tableView rowViewAtRow:row makeIfNecessary:NO] setBackgroundColor:rowColor];
+            }
         }
         else if (energy < [[APSettings settingForKeyPath:@"energythreshholds.high"] doubleValue])
         {
             cellView.textField.textColor = [NSColor orangeColor];
+            [[tableView rowViewAtRow:row makeIfNecessary:NO] setBackgroundColor:[NSColor orangeColor]];
         }
         else
         {
             cellView.textField.textColor = [NSColor redColor];
+            [[tableView rowViewAtRow:row makeIfNecessary:NO] setBackgroundColor:[NSColor redColor]];
         }
     }
     else if ([[tableColumn identifier] isEqualToString:@"status"])
@@ -216,7 +239,6 @@
         status = [NSString stringWithFormat:@"%@ %@", [APSettings settingForKeyPath:[@"statussymbols." stringByAppendingString:[status substringToIndex:1]]], status];
         [cellView.imageView setHidden:YES];
         cellView.textField.stringValue = status;
-        cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
     }
     
     return cellView;
