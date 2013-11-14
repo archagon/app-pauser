@@ -110,14 +110,14 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ju0-kP-Vu7">
-                        <rect key="frame" x="10" y="41" width="491" height="292"/>
+                        <rect key="frame" x="10" y="36" width="491" height="297"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <clipView key="contentView" id="VOy-x1-Rb8" customClass="NSLayerBackedClipView">
-                            <rect key="frame" x="1" y="17" width="489" height="274"/>
+                            <rect key="frame" x="1" y="17" width="489" height="279"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="rep-hU-ZWz" viewBased="YES" id="35j-lw-KKj">
-                                    <rect key="frame" x="0.0" y="0.0" width="489" height="274"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="489" height="279"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -369,7 +369,7 @@
                     <constraint firstAttribute="trailing" secondItem="4aC-A6-8e1" secondAttribute="trailing" constant="10" id="j6F-2o-YZx"/>
                     <constraint firstAttribute="trailing" secondItem="ju0-kP-Vu7" secondAttribute="trailing" constant="10" id="n7a-UI-7xx"/>
                     <constraint firstAttribute="bottom" secondItem="TBh-re-M1f" secondAttribute="bottom" constant="10" id="rt6-00-2nP"/>
-                    <constraint firstItem="TBh-re-M1f" firstAttribute="top" secondItem="ju0-kP-Vu7" secondAttribute="bottom" constant="10" id="sRc-8e-GWt"/>
+                    <constraint firstItem="TBh-re-M1f" firstAttribute="top" secondItem="ju0-kP-Vu7" secondAttribute="bottom" constant="5" id="sRc-8e-GWt"/>
                     <constraint firstItem="4aC-A6-8e1" firstAttribute="top" secondItem="372" secondAttribute="top" constant="10" id="vi0-kS-Gt0"/>
                 </constraints>
             </view>
