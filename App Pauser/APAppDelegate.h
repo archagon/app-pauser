@@ -18,6 +18,9 @@
 #import <Cocoa/Cocoa.h>
 #import "APProcessDataSource.h"
 
+@interface NSLayerBackedClipView : NSClipView
+@end
+
 @interface APAppDelegate : NSObject <NSApplicationDelegate, NSTableViewDelegate, NSTextDelegate>
 
 @property (assign) IBOutlet NSWindow* window;

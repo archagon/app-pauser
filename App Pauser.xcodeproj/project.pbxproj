@@ -18,6 +18,7 @@
 		4E3CF8D31833F755006B3201 /* APSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4E3CF8D21833F755006B3201 /* APSettings.plist */; };
 		4E3CF8D71833F84C006B3201 /* APSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E3CF8D61833F84C006B3201 /* APSettings.m */; };
 		4E3CF8D91833FAB4006B3201 /* NOTES.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4E3CF8D81833FAB4006B3201 /* NOTES.rtf */; };
+		4E3CF8DB18344D47006B3201 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E3CF8DA18344D47006B3201 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		4E3CF8D51833F84C006B3201 /* APSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APSettings.h; sourceTree = "<group>"; };
 		4E3CF8D61833F84C006B3201 /* APSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APSettings.m; sourceTree = "<group>"; };
 		4E3CF8D81833FAB4006B3201 /* NOTES.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = NOTES.rtf; sourceTree = "<group>"; };
+		4E3CF8DA18344D47006B3201 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E3CF8DB18344D47006B3201 /* QuartzCore.framework in Frameworks */,
 				4E3CF8921831ECF7006B3201 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -77,6 +80,7 @@
 		4E3CF8901831ECF7006B3201 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4E3CF8DA18344D47006B3201 /* QuartzCore.framework */,
 				4E3CF8911831ECF7006B3201 /* Cocoa.framework */,
 				4E3CF8B01831ECF7006B3201 /* XCTest.framework */,
 				4E3CF8931831ECF7006B3201 /* Other Frameworks */,

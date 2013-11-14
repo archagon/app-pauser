@@ -10,6 +10,15 @@
 
 // TODO: notifications, etc.
 
+@implementation NSLayerBackedClipView
+
+- (CALayer*) makeBackingLayer
+{
+    return [CAScrollLayer layer];
+}
+
+@end
+
 @implementation APAppDelegate
 
 -(void) dealloc
