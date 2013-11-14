@@ -179,11 +179,11 @@
         cellView.textField.stringValue = [NSString stringWithFormat:@"%.1f", energy * 100];
         cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
         
-        if (energy < 0.1f)
+        if (energy < [[APSettings settingForKeyPath:@"energythreshholds.medium"] doubleValue])
         {
             cellView.textField.textColor = [NSColor blackColor];
         }
-        else if (energy < 0.25f)
+        else if (energy < [[APSettings settingForKeyPath:@"energythreshholds.high"] doubleValue])
         {
             cellView.textField.textColor = [NSColor orangeColor];
         }

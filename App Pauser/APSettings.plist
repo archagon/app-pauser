@@ -2,6 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>energythreshholds</key>
+	<dict>
+		<key>medium</key>
+		<real>0.1</real>
+		<key>high</key>
+		<real>0.25</real>
+	</dict>
 	<key>statussymbols</key>
 	<dict>
 		<key>I</key>
