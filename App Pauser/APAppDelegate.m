@@ -8,8 +8,6 @@
 
 #import "APAppDelegate.h"
 
-// TODO: notifications, etc.
-
 @implementation NSLayerBackedClipView
 
 - (CALayer*) makeBackingLayer
@@ -21,6 +19,7 @@
 
 @implementation APAppDelegate
 
+// TODO: notifications, etc.
 -(void) dealloc
 {
     [self.dataSource removeObserver:self forKeyPath:NSStringFromSelector(@selector(applications))];
@@ -37,6 +36,11 @@
     [self.dataSource updateStatusForApplication:nil];
     self.table.dataSource = self.dataSource;
     
+    // TODO: I still don't really know how all this stuff works, especially with implicit child layers
+    //[[[self.table superview] layer] setOpaque:YES];
+    //[[[self.table superview] layer] setDrawsAsynchronously:YES];
+    //[[self.table superview] setLayerContentsRedrawPolicy:NSViewLayerContentsRedrawOnSetNeedsDisplay];
+    
     for (NSTableColumn* column in [self.table tableColumns])
     {
         NSString* columnID = [column identifier];
@@ -49,7 +53,7 @@
         }
     }
     
-    [self.table setAllowsTypeSelect:NO]; // too slow with button label changes, figure out later
+    [self.table setAllowsTypeSelect:NO]; // TODO: too slow with button label changes, figure out later
 }
 
 -(void) applicationWillTerminate:(NSNotification*)notification

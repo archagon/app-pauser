@@ -311,6 +311,12 @@
     return [self.applications count];
 }
 
+-(id) tableView:(NSTableView*)aTableView objectValueForTableColumn:(NSTableColumn*)aTableColumn row:(NSInteger)rowIndex
+{
+    // TODO: what is this even for?
+    return nil;
+}
+
 - (void)tableView:(NSTableView*)tableView sortDescriptorsDidChange:(NSArray*)oldDescriptors
 {
     if (tableView != nil)
