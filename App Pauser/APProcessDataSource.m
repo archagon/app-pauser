@@ -20,18 +20,17 @@
 @property (nonatomic, retain) APBSDProcessList* BSDProcessList;
 @property (nonatomic, retain) NSMutableDictionary* processIDsToApplications;
 
-@property (nonatomic, retain) NSMutableDictionary* cachedProcessIDsToStatuses;
 @property (nonatomic, retain) NSMutableDictionary* currentProcessIDsToCPU;
 @property (nonatomic, retain) NSMutableDictionary* processIDsToEnergy;
+@property (nonatomic, assign) CGFloat totalEnergy;
 
-@property (nonatomic, assign, readwrite) NSInteger cpuTimeUpdateTick;
-@property (nonatomic, retain) NSTask* topTask;
 @property (nonatomic, retain) NSArray* cachedSortDescriptors;
-@property (nonatomic, retain) NSRegularExpression* topTaskRegex;
+
+@property (nonatomic, retain) NSTimer* CPUUpdateTimer;
+@property (nonatomic, assign, readwrite) NSInteger cpuTimeUpdateTick;
+
 @property (nonatomic, retain) NSRegularExpression* psRegex;
 @property (nonatomic, retain) NSRegularExpression* psCPURegex;
-@property (nonatomic, retain) NSTimer* CPUUpdateTimer;
-@property (nonatomic, assign) CGFloat totalEnergy;
 
 -(void) updateProcessIDs;
 
@@ -42,7 +41,6 @@
 -(void) dealloc
 {
     [[NSWorkspace sharedWorkspace] removeObserver:self forKeyPath:NSStringFromSelector(@selector(runningApplications))];
-    [self.topTask interrupt];
     [self.CPUUpdateTimer invalidate];
 }
 
@@ -52,11 +50,13 @@
     if (self)
     {
         self.processIDs = [NSArray array];
+        self.processIDsToApplications = [NSMutableDictionary dictionary];
+        self.currentProcessIDsToCPU = [NSMutableDictionary dictionary];
         self.processIDsToEnergy = [NSMutableDictionary dictionary];
+        
+        self.BSDProcessList = [[APBSDProcessList alloc] init];
+        [[NSWorkspace sharedWorkspace] addObserver:self forKeyPath:NSStringFromSelector(@selector(runningApplications)) options:NSKeyValueObservingOptionInitial context:NULL];
 
-        self.topTaskRegex = [NSRegularExpression regularExpressionWithPattern:@"\\s*(\\d+)\\s+(\\d+\\.\\d+)\\s*"
-                                                                      options:0
-                                                                        error:NULL];
         self.psRegex = [NSRegularExpression regularExpressionWithPattern:@"\\n[^\\n]*?\\s*(\\d+)\\s+([a-zA-Z]+)\\s*\\n"
                                                                                options:0
                                                                                  error:NULL];
@@ -64,10 +64,7 @@
                                                                     options:0
                                                                       error:NULL];
         
-//        self.CPUUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(pollCPUAsync) userInfo:nil repeats:YES];
-        self.BSDProcessList = [[APBSDProcessList alloc] init];
-        
-        [[NSWorkspace sharedWorkspace] addObserver:self forKeyPath:NSStringFromSelector(@selector(runningApplications)) options:NSKeyValueObservingOptionInitial context:NULL];
+        self.CPUUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(pollCPU) userInfo:nil repeats:YES];
     }
     return self;
 }
@@ -122,83 +119,63 @@
     self.processIDs = sortedApplications;
 }
 
-//-(void) pollAllProcesses
-//{
-//    double startTime = CACurrentMediaTime();
-//    
-//    [self.BSDProcessList refreshProcessList];
-//    [self.BSDProcessList refreshProcessList];
-//    [self.BSDProcessList refreshProcessList];
-//    [self.BSDProcessList refreshProcessList];
-//    
-//    for (NSNumber* number in [self.BSDProcessList processIDs])
-//    {
-//        int asdf = 123;
-//        asdf = asdf;
-//    }
-//    
-//    double endTime = CACurrentMediaTime();
-//    
-//    NSLog(@"Time: %lf", endTime-startTime);
-//}
-
-//-(void) pollCPU
-//{
-//    self.currentProcessIDsToCPU = [NSMutableDictionary dictionary];
-//    
-//    for (NSRunningApplication* application in self.runningApplications)
-//    {
-//        NSString* pidKey = [NSString stringWithFormat:@"%d", [application processIdentifier]];
-//        self.currentProcessIDsToCPU[pidKey] = @"0.0";
-//    }
-//    
-//    // launch ps task
-//    NSTask* statusTask = [[NSTask alloc] init];
-//    [statusTask setLaunchPath:@"/bin/ps"];
-//    NSArray* arguments = arguments = [NSArray arrayWithObjects:@"aux", @"-o", @"pid,%cpu", nil];
-//    [statusTask setArguments:arguments];
-//    statusTask.standardOutput = [NSPipe pipe];
-//    [statusTask launch];
-//    [statusTask waitUntilExit];
-//    
-//    // make sure exit status is OK
-//    int terminationStatus = [statusTask terminationStatus];
-//    NSAssert(terminationStatus == 0, @"ps returned with a termination status of %d", terminationStatus);
-//    
-//    // capture output data from pipe
-//    NSData* outputData = [[statusTask.standardOutput fileHandleForReading] readDataToEndOfFile];
-//    NSString* outputString = [[NSString alloc] initWithData:outputData encoding:NSUTF8StringEncoding];
-//    CGFloat totalMeasuredLoad = 0;
-//    
-//    // process output data
-//    NSArray* matches = [self.psCPURegex matchesInString:outputString options:0 range:NSMakeRange(0, [outputString length])];
-//    for (NSTextCheckingResult* match in matches)
-//    {
-//        NSString* processID = [outputString substringWithRange:[match rangeAtIndex:1]];
-//        NSString* cpu = [outputString substringWithRange:[match rangeAtIndex:2]];
-//        
-//        if (self.currentProcessIDsToCPU[processID])
-//        {
-//            CGFloat cpuValue = [cpu doubleValue];
-//            
-//            self.currentProcessIDsToCPU[processID] = cpu;
-//            
-//            if (self.processIDsToEnergy[processID])
-//            {
-//                self.processIDsToEnergy[processID] = @([self.processIDsToEnergy[processID] doubleValue] + cpuValue);
-//            }
-//            else
-//            {
-//                self.processIDsToEnergy[processID] = @0;
-//            }
-//            
-//            totalMeasuredLoad += cpuValue;
-//        }
-//    }
-//    
-//    self.totalEnergy += 100;
-//    self.cpuTimeUpdateTick++;
-//}
+-(void) pollCPU
+{
+    self.currentProcessIDsToCPU = [NSMutableDictionary dictionary];
+    
+    for (NSNumber* processID in self.processIDs)
+    {
+        self.currentProcessIDsToCPU[processID] = @0;
+    }
+    
+    // launch ps task
+    NSTask* statusTask = [[NSTask alloc] init];
+    [statusTask setLaunchPath:@"/bin/ps"];
+    NSArray* arguments = arguments = [NSArray arrayWithObjects:@"aux", @"-o", @"pid,%cpu", nil];
+    [statusTask setArguments:arguments];
+    statusTask.standardOutput = [NSPipe pipe];
+    [statusTask launch];
+    [statusTask waitUntilExit];
+    
+    // make sure exit status is OK
+    int terminationStatus = [statusTask terminationStatus];
+    NSAssert(terminationStatus == 0, @"ps returned with a termination status of %d", terminationStatus);
+    
+    // capture output data from pipe
+    NSData* outputData = [[statusTask.standardOutput fileHandleForReading] readDataToEndOfFile];
+    NSString* outputString = [[NSString alloc] initWithData:outputData encoding:NSUTF8StringEncoding];
+    CGFloat totalMeasuredLoad = 0;
+    
+    // process output data
+    NSArray* matches = [self.psCPURegex matchesInString:outputString options:0 range:NSMakeRange(0, [outputString length])];
+    for (NSTextCheckingResult* match in matches)
+    {
+        NSString* processIDString = [outputString substringWithRange:[match rangeAtIndex:1]];
+        pid_t processID = [processIDString intValue];
+        NSNumber* processIDKey = @(processID);
+        NSString* cpu = [outputString substringWithRange:[match rangeAtIndex:2]];
+        CGFloat cpuValue = [cpu doubleValue];
+        
+        if (self.currentProcessIDsToCPU[processIDKey])
+        {
+            self.currentProcessIDsToCPU[processIDKey] = @(cpuValue);
+            
+            if (self.processIDsToEnergy[processIDKey])
+            {
+                self.processIDsToEnergy[processIDKey] = @([self.processIDsToEnergy[processIDKey] doubleValue] + cpuValue);
+            }
+            else
+            {
+                self.processIDsToEnergy[processIDKey] = @0;
+            }
+            
+            totalMeasuredLoad += cpuValue;
+        }
+    }
+    
+    self.totalEnergy += 100; // TODO: this isn't really accurate for dual cores; should be 200?
+    self.cpuTimeUpdateTick++;
+}
 
 //-(void) pollCPUAsync
 //{
@@ -292,14 +269,12 @@
 
 -(CGFloat) CPUTimeForProcess:(pid_t)processID
 {
-    // TODO:
-    return 0;
+    return [self.currentProcessIDsToCPU[@(processID)] doubleValue];
 }
 
 -(CGFloat) energyForProcess:(pid_t)processID
 {
-    // TODO:
-    return 0;
+    return [self.processIDsToEnergy[@(processID)] doubleValue] / self.totalEnergy;
 }
 
 -(BOOL) suspend:(BOOL)suspend process:(pid_t)processID
