@@ -19,6 +19,7 @@
 		4E3CF8D71833F84C006B3201 /* APSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E3CF8D61833F84C006B3201 /* APSettings.m */; };
 		4E3CF8D91833FAB4006B3201 /* NOTES.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4E3CF8D81833FAB4006B3201 /* NOTES.rtf */; };
 		4E3CF8DB18344D47006B3201 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E3CF8DA18344D47006B3201 /* QuartzCore.framework */; };
+		4E3CF8DE183470D7006B3201 /* APBSDProcessList.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E3CF8DC183470D7006B3201 /* APBSDProcessList.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,8 @@
 		4E3CF8D61833F84C006B3201 /* APSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APSettings.m; sourceTree = "<group>"; };
 		4E3CF8D81833FAB4006B3201 /* NOTES.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = NOTES.rtf; sourceTree = "<group>"; };
 		4E3CF8DA18344D47006B3201 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		4E3CF8DC183470D7006B3201 /* APBSDProcessList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APBSDProcessList.m; sourceTree = "<group>"; };
+		4E3CF8DD183470D7006B3201 /* APBSDProcessList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APBSDProcessList.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +110,8 @@
 				4E3CF8CC1832D0FB006B3201 /* APProcessDataSource.m */,
 				4E3CF8D51833F84C006B3201 /* APSettings.h */,
 				4E3CF8D61833F84C006B3201 /* APSettings.m */,
+				4E3CF8DC183470D7006B3201 /* APBSDProcessList.m */,
+				4E3CF8DD183470D7006B3201 /* APBSDProcessList.h */,
 				4E3CF8A61831ECF7006B3201 /* MainMenu.xib */,
 				4E3CF8A91831ECF7006B3201 /* Images.xcassets */,
 				4E3CF8981831ECF7006B3201 /* Supporting Files */,
@@ -209,6 +214,7 @@
 				4E3CF89E1831ECF7006B3201 /* main.m in Sources */,
 				4E3CF8D71833F84C006B3201 /* APSettings.m in Sources */,
 				4E3CF8CD1832D0FB006B3201 /* APProcessDataSource.m in Sources */,
+				4E3CF8DE183470D7006B3201 /* APBSDProcessList.m in Sources */,
 				4E3CF8A51831ECF7006B3201 /* APAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
