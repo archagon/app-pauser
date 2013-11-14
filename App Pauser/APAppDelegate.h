@@ -9,9 +9,9 @@
 // features:
 // TODO: sorting by energy & CPU
 // TODO: adjust energy whenever apps are added, closed, or paused
-// TODO: Spelunky in Wine doesn't show up! what shows up and what doesn't? maybe use a different technique?
 // TODO: query
 // TODO: resizing behavior
+// TODO: filter high energy use
 
 // optimizations:
 // TODO: very slow filtering and sorting
