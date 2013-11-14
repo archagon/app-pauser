@@ -433,7 +433,7 @@
         pid_t processIDNum = [processID intValue];
         if (self.showOnlyHighUsage)
         {
-            if ([self energyForProcess:processIDNum] == 0)
+            if ([self energyForProcess:processIDNum] < 0.01f)
             {
                 continue;
             }
