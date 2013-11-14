@@ -71,16 +71,32 @@
         }
         else if ([keyPath isEqualToString:NSStringFromSelector(@selector(cpuTimeUpdateTick))])
         {
-            NSIndexSet* allRows = [[NSIndexSet alloc] initWithIndexesInRange:NSMakeRange(0, [self.table numberOfRows])];
+            NSMutableIndexSet* rowsToChange = [NSMutableIndexSet indexSet];
+            
+            for (NSUInteger i = 0; i < [self.table numberOfRows]; i++)
+            {
+                NSTableRowView* rowView = [self.table rowViewAtRow:i makeIfNecessary:NO];
+                NSTableCellView* cellView = [rowView viewAtColumn:[self.table columnWithIdentifier:@"cpu"]];
+                
+                pid_t processID = [[[self.dataSource processIDs] objectAtIndex:i] intValue];
+                CGFloat newCPUValue = [self.dataSource CPUTimeForProcess:processID];
+                CGFloat oldCPUValue = ([cellView objectValue] ? [[cellView objectValue] doubleValue] : 0);
+                
+                if (newCPUValue != oldCPUValue)
+                {
+                    [rowsToChange addIndex:i];
+                }
+            }
+            
             NSMutableIndexSet* cpuColumn = [NSMutableIndexSet indexSet];
             [cpuColumn addIndex:[self.table columnWithIdentifier:@"cpu"]];
             [cpuColumn addIndex:[self.table columnWithIdentifier:@"energy"]];
-            [self.table reloadDataForRowIndexes:allRows columnIndexes:cpuColumn];
+            [self.table reloadDataForRowIndexes:rowsToChange columnIndexes:cpuColumn];
         }
     }
 }
 
--(IBAction) buttonPushed:(id)sender
+-(IBAction) buttonPushed:(NSButton*)sender
 {
     // TODO: save tasks
     // TODO: can't stop current process
@@ -97,6 +113,11 @@
     [self.table reloadDataForRowIndexes:currentRow columnIndexes:allColumns];
     
     [self updateButtonLabelWithRow:selectedRowIndex];
+}
+
+-(IBAction) togglePushed:(NSButton*)sender
+{
+    self.dataSource.showOnlyHighUsage = [sender state];
 }
 
 -(BOOL) tableView:(NSTableView*)tableView shouldSelectRow:(NSInteger)row

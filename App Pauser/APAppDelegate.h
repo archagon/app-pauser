@@ -41,7 +41,9 @@
 
 @property (nonatomic, retain) APProcessDataSource* dataSource;
 
--(IBAction) buttonPushed:(id)sender;
+-(IBAction) buttonPushed:(NSButton*)sender;
+-(IBAction) togglePushed:(NSButton*)sender;
+
 -(void) updateButtonLabelWithRow:(NSInteger)rowIndex;
 
 @end

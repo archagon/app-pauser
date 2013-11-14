@@ -351,6 +351,9 @@
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="togglePushed:" target="494" id="smm-jR-4FL"/>
+                        </connections>
                     </button>
                 </subviews>
                 <constraints>

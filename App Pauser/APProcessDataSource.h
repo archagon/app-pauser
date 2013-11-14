@@ -14,6 +14,7 @@
 
 @property (nonatomic, assign, readonly) NSInteger cpuTimeUpdateTick; // KVO-observe me!
 @property (nonatomic, retain) NSString* filter;
+@property (nonatomic, assign) BOOL showOnlyHighUsage;
 
 -(NSString*) nameForProcess:(pid_t)processID;
 -(NSImage*) imageForProcess:(pid_t)processID;

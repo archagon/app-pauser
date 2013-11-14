@@ -274,7 +274,14 @@
 
 -(CGFloat) energyForProcess:(pid_t)processID
 {
-    return [self.processIDsToEnergy[@(processID)] doubleValue] / self.totalEnergy;
+    if (self.totalEnergy == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return [self.processIDsToEnergy[@(processID)] doubleValue] / self.totalEnergy;
+    }
 }
 
 -(BOOL) suspend:(BOOL)suspend process:(pid_t)processID
@@ -336,7 +343,27 @@
 
 -(id) tableView:(NSTableView*)aTableView objectValueForTableColumn:(NSTableColumn*)aTableColumn row:(NSInteger)rowIndex
 {
-    // TODO: what is this even for?
+    if ([[aTableColumn identifier] isEqualToString:@"name"])
+    {
+        return [self nameForProcess:[[self.processIDs objectAtIndex:rowIndex] intValue]];
+    }
+    else if ([[aTableColumn identifier] isEqualToString:@"pid"])
+    {
+        return [self.processIDs objectAtIndex:rowIndex];
+    }
+    else if ([[aTableColumn identifier] isEqualToString:@"cpu"])
+    {
+        return @([self CPUTimeForProcess:[[self.processIDs objectAtIndex:rowIndex] intValue]]);
+    }
+    else if ([[aTableColumn identifier] isEqualToString:@"energy"])
+    {
+        return @([self energyForProcess:[[self.processIDs objectAtIndex:rowIndex] intValue]]);
+    }
+    else if ([[aTableColumn identifier] isEqualToString:@"status"])
+    {
+        return [self statusForProcess:[[self.processIDs objectAtIndex:rowIndex] intValue]];
+    }
+
     return nil;
 }
 
@@ -355,6 +382,13 @@
 -(void) setFilter:(NSString*)filter
 {
     _filter = filter;
+    
+    [self updateProcessIDs];
+}
+
+-(void) setShowOnlyHighUsage:(BOOL)showOnlyHighUsage
+{
+    _showOnlyHighUsage = showOnlyHighUsage;
     
     [self updateProcessIDs];
 }
@@ -386,7 +420,7 @@
 // TODO: this should probably use an NSPredicate, but whatever
 -(NSArray*) filter:(NSArray*)processIDs withFilter:(NSString*)filter
 {
-    if ([filter length] == 0)
+    if (!self.showOnlyHighUsage && [filter length] == 0)
     {
         return processIDs;
     }
@@ -396,6 +430,23 @@
     
     for (NSNumber* processID in processIDs)
     {
+        pid_t processIDNum = [processID intValue];
+        if (self.showOnlyHighUsage)
+        {
+            if ([self energyForProcess:processIDNum] == 0)
+            {
+                continue;
+            }
+            else
+            {
+                if ([filter length] == 0)
+                {
+                    [newArray addObject:processID];
+                    continue;
+                }
+            }
+        }
+        
         NSString* appName = [[self nameForProcess:[processID intValue]] uppercaseString];
         NSUInteger filterIndex = 0;
         
