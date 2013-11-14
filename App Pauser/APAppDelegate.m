@@ -28,7 +28,7 @@
 
 -(void) applicationDidFinishLaunching:(NSNotification*)aNotification
 {
-    self.searchField.currentEditor.delegate = self;
+    self.searchField.delegate = self;
     
     self.dataSource = [[APProcessDataSource alloc] init];
     [self.dataSource addObserver:self forKeyPath:NSStringFromSelector(@selector(applications)) options:0 context:NULL];
@@ -207,7 +207,7 @@
     return cellView;
 }
 
--(void) textDidChange:(NSNotification*)notification
+-(void) controlTextDidChange:(NSNotification*)aNotification
 {
     self.dataSource.filter = self.searchField.currentEditor.string;
 }

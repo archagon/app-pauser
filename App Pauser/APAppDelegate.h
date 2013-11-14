@@ -33,7 +33,7 @@
 @interface NSLayerBackedClipView : NSClipView
 @end
 
-@interface APAppDelegate : NSObject <NSApplicationDelegate, NSTableViewDelegate, NSTextDelegate>
+@interface APAppDelegate : NSObject <NSApplicationDelegate, NSTableViewDelegate, NSTextFieldDelegate>
 
 @property (assign) IBOutlet NSWindow* window;
 @property (assign) IBOutlet NSTableView* table;
