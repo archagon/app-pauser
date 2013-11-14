@@ -192,7 +192,7 @@
     }
     else if ([[tableColumn identifier] isEqualToString:@"status"])
     {
-        status = [APSettings settingForKeyPath:[@"statussymbols." stringByAppendingString:[status substringToIndex:1]]];
+        status = [NSString stringWithFormat:@"%@ %@", [APSettings settingForKeyPath:[@"statussymbols." stringByAppendingString:[status substringToIndex:1]]], status];
         [cellView.imageView setHidden:YES];
         cellView.textField.stringValue = status;
         cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
