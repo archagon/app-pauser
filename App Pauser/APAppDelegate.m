@@ -7,6 +7,7 @@
 //
 
 #import "APAppDelegate.h"
+#import <Quartz/Quartz.h>
 
 @implementation NSLayerBackedClipView
 
@@ -22,7 +23,7 @@
 // TODO: notifications, etc.
 -(void) dealloc
 {
-    [self.dataSource removeObserver:self forKeyPath:NSStringFromSelector(@selector(applications))];
+    [self.dataSource removeObserver:self forKeyPath:NSStringFromSelector(@selector(processIDs))];
     [self.dataSource removeObserver:self forKeyPath:NSStringFromSelector(@selector(cpuTimeUpdateTick))];
 }
 
@@ -31,9 +32,9 @@
     self.searchField.delegate = self;
     
     self.dataSource = [[APProcessDataSource alloc] init];
-    [self.dataSource addObserver:self forKeyPath:NSStringFromSelector(@selector(applications)) options:0 context:NULL];
+    [self.dataSource addObserver:self forKeyPath:NSStringFromSelector(@selector(processIDs)) options:0 context:NULL];
     [self.dataSource addObserver:self forKeyPath:NSStringFromSelector(@selector(cpuTimeUpdateTick)) options:NSKeyValueObservingOptionInitial context:NULL];
-    [self.dataSource updateStatusForApplication:nil];
+    [self.dataSource updateStatusForProcess:-1];
     self.table.dataSource = self.dataSource;
     
     // TODO: I still don't really know how all this stuff works, especially with implicit child layers
@@ -64,7 +65,7 @@
 {
     if (object == self.dataSource)
     {
-        if ([keyPath isEqualToString:NSStringFromSelector(@selector(applications))])
+        if ([keyPath isEqualToString:NSStringFromSelector(@selector(processIDs))])
         {
             [self.table reloadData];
         }
@@ -85,24 +86,17 @@
     // TODO: can't stop current process
     
     NSInteger selectedRowIndex = [self.table selectedRow];
-    NSRunningApplication* application = self.dataSource.applications[selectedRowIndex];
+    pid_t processID = [self.dataSource.processIDs[selectedRowIndex] intValue];
     
-    if (![application isTerminated])
-    {
-        BOOL isSuspended = [self.dataSource applicationIsSuspended:application];
-        
-        BOOL suspendSucceeded = [self.dataSource suspend:!isSuspended application:application];
-        
-        NSIndexSet* currentRow = [[NSIndexSet alloc] initWithIndex:selectedRowIndex];
-        NSIndexSet* allColumns = [[NSIndexSet alloc] initWithIndexesInRange:NSMakeRange(0, [self.table numberOfColumns])];
-        [self.table reloadDataForRowIndexes:currentRow columnIndexes:allColumns];
-        
-        [self updateButtonLabelWithRow:selectedRowIndex];
-    }
-    else
-    {
-        NSAssert(NO, @"attempting to pause application that is no longer running");
-    }
+    BOOL isSuspended = [self.dataSource processIsSuspended:processID];
+    
+    BOOL suspendSucceeded = [self.dataSource suspend:!isSuspended process:processID];
+    
+    NSIndexSet* currentRow = [[NSIndexSet alloc] initWithIndex:selectedRowIndex];
+    NSIndexSet* allColumns = [[NSIndexSet alloc] initWithIndexesInRange:NSMakeRange(0, [self.table numberOfColumns])];
+    [self.table reloadDataForRowIndexes:currentRow columnIndexes:allColumns];
+    
+    [self updateButtonLabelWithRow:selectedRowIndex];
 }
 
 -(BOOL) tableView:(NSTableView*)tableView shouldSelectRow:(NSInteger)row
@@ -118,9 +112,9 @@
         return;
     }
     
-    NSRunningApplication* application = self.dataSource.applications[rowIndex];
+    pid_t processID = [self.dataSource.processIDs[rowIndex] intValue];
     
-    if ([application isEqual:[NSRunningApplication currentApplication]])
+    if (processID == [[NSRunningApplication currentApplication] processIdentifier])
     {
         [self.button setEnabled:NO];
         self.button.title = [NSString stringWithFormat:@"Can't pause myself!"];
@@ -131,54 +125,54 @@
         [self.button setEnabled:YES];
     }
     
-    [self.dataSource updateStatusForApplication:application];
+    [self.dataSource updateStatusForProcess:processID];
     
-    if ([self.dataSource applicationIsSuspended:application])
+    if ([self.dataSource processIsSuspended:processID])
     {
-        self.button.title = [NSString stringWithFormat:@"Resume %@", [application localizedName]];
+        self.button.title = [NSString stringWithFormat:@"Resume %@", [self.dataSource nameForProcess:processID]];
     }
     else
     {
-        self.button.title = [NSString stringWithFormat:@"Pause %@", [application localizedName]];
+        self.button.title = [NSString stringWithFormat:@"Pause %@", [self.dataSource nameForProcess:processID]];
     }
 }
 
 -(NSView*)tableView:(NSTableView*)tableView viewForTableColumn:(NSTableColumn*)tableColumn row:(NSInteger)row
 {
-    if ([self.dataSource.applications count] == 0)
+    if ([self.dataSource.processIDs count] == 0)
     {
         return nil;
     }
     
-    NSRunningApplication* currentApplication = self.dataSource.applications[row];
-    BOOL applicationIsSuspended = [self.dataSource applicationIsSuspended:currentApplication];
-    NSString* status = [self.dataSource applicationStatus:currentApplication];
+    pid_t processID = [self.dataSource.processIDs[row] intValue];
+    BOOL applicationIsSuspended = [self.dataSource processIsSuspended:processID];
+    NSString* status = [self.dataSource statusForProcess:processID];
     
     NSTableCellView* cellView = [tableView makeViewWithIdentifier:[tableColumn identifier] owner:self];
     
     if ([[tableColumn identifier] isEqualToString:@"name"])
     {
-        cellView.textField.stringValue = [currentApplication localizedName];
+        cellView.textField.stringValue = [self.dataSource nameForProcess:processID];
         cellView.textField.textColor = (applicationIsSuspended ? [NSColor grayColor] : [NSColor blackColor]);
-        cellView.imageView.image = [currentApplication icon];
+        cellView.imageView.image = [self.dataSource imageForProcess:processID];
         cellView.imageView.alphaValue = (applicationIsSuspended ? 0.5f : 1.0f);
         cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
     }
     else if ([[tableColumn identifier] isEqualToString:@"pid"])
     {
-        cellView.textField.stringValue = [NSString stringWithFormat:@"%d", [currentApplication processIdentifier]];
+        cellView.textField.stringValue = [NSString stringWithFormat:@"%d", processID];
         cellView.textField.textColor = (applicationIsSuspended ? [NSColor grayColor] : [NSColor blackColor]);
         cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
     }
     else if ([[tableColumn identifier] isEqualToString:@"cpu"])
     {
-        cellView.textField.stringValue = [self.dataSource CPUTimeForApplication:currentApplication];
+        cellView.textField.stringValue = [NSString stringWithFormat:@"%.1f", [self.dataSource CPUTimeForProcess:processID]];
         cellView.textField.textColor = (applicationIsSuspended ? [NSColor grayColor] : [NSColor blackColor]);
         cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);
     }
     else if ([[tableColumn identifier] isEqualToString:@"energy"])
     {
-        CGFloat energy = [self.dataSource energyForApplication:currentApplication];
+        CGFloat energy = [self.dataSource energyForProcess:processID];
         
         cellView.textField.stringValue = [NSString stringWithFormat:@"%.1f", energy * 100];
         cellView.backgroundStyle = (applicationIsSuspended ? NSBackgroundStyleDark : NSBackgroundStyleLight);

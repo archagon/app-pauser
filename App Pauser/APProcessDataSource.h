@@ -10,17 +10,20 @@
 
 @interface APProcessDataSource : NSObject <NSTableViewDataSource>
 
-@property (nonatomic, retain, readonly) NSArray* applications; // KVO-observe me!
+@property (nonatomic, retain, readonly) NSArray* processIDs; // KVO-observe me!
+
 @property (nonatomic, assign, readonly) NSInteger cpuTimeUpdateTick; // KVO-observe me!
 @property (nonatomic, retain) NSString* filter;
 
--(NSString*) CPUTimeForApplication:(NSRunningApplication*)application;
--(CGFloat) energyForApplication:(NSRunningApplication*)application;
--(BOOL) suspend:(BOOL)suspend application:(NSRunningApplication*)application; // auto updates status
+-(NSString*) nameForProcess:(pid_t)processID;
+-(NSImage*) imageForProcess:(pid_t)processID;
+-(CGFloat) CPUTimeForProcess:(pid_t)processID;
+-(CGFloat) energyForProcess:(pid_t)processID;
 
-// status notifications aren't provided by the OS, so we have to be a little kludgy
--(BOOL) applicationIsSuspended:(NSRunningApplication*)application;
--(NSString*) applicationStatus:(NSRunningApplication*)application;
--(void) updateStatusForApplication:(NSRunningApplication*)application; // nil for all applications
+-(BOOL) processIsSuspended:(pid_t)processID;
+-(NSString*) statusForProcess:(pid_t)processID;
+-(void) updateStatusForProcess:(pid_t)processID; // -1 for all applications
+
+-(BOOL) suspend:(BOOL)suspend process:(pid_t)processID; // auto updates status
 
 @end
