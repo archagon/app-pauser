@@ -481,6 +481,14 @@
     {
          return [@(processID1) compare:@(processID2)];
     }
+    else if ([key isEqualToString:@"cpu"])
+    {
+        return [@([self CPUTimeForProcess:processID1]) compare:@([self CPUTimeForProcess:processID2])];
+    }
+    else if ([key isEqualToString:@"energy"])
+    {
+        return [@([self energyForProcess:processID1]) compare:@([self energyForProcess:processID2])];
+    }
     else if ([key isEqualToString:@"status"])
     {
         NSString* status1 = [self statusForProcess:processID1];

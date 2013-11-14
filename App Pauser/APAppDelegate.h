@@ -23,9 +23,11 @@
 // TODO: gather all NSTasks to cancel if quit
 // TODO: make sure quitting works as intended
 // TODO: gray area on bottom of scroll instead of empty rows
+// TODO: tapping quickly repeatedly on button crashes
 
 // TODO: correct CALayer behavior for maximally smooth scrolling
 // TODO: taskbar drop-down icon
+// TODO: remember size & filter
 
 #import <Cocoa/Cocoa.h>
 #import "APProcessDataSource.h"
