@@ -449,7 +449,7 @@
 {
     if ([key isEqualToString:@"name"])
     {
-         return [[self nameForProcess:processID1] compare:[self nameForProcess:processID2]];
+         return [[[self nameForProcess:processID1] uppercaseString] compare:[[self nameForProcess:processID2] uppercaseString]];
     }
     else if ([key isEqualToString:@"pid"])
     {
