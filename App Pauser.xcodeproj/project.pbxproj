@@ -48,6 +48,7 @@
 		4E3CF8DA18344D47006B3201 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		4E3CF8DC183470D7006B3201 /* APBSDProcessList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APBSDProcessList.m; sourceTree = "<group>"; };
 		4E3CF8DD183470D7006B3201 /* APBSDProcessList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APBSDProcessList.h; sourceTree = "<group>"; };
+		4E3CF8E01835E8C2006B3201 /* ABProfiling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ABProfiling.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +105,7 @@
 		4E3CF8971831ECF7006B3201 /* App Pauser */ = {
 			isa = PBXGroup;
 			children = (
+				4E3CF8E01835E8C2006B3201 /* ABProfiling.h */,
 				4E3CF8A31831ECF7006B3201 /* APAppDelegate.h */,
 				4E3CF8A41831ECF7006B3201 /* APAppDelegate.m */,
 				4E3CF8CB1832D0FB006B3201 /* APProcessDataSource.h */,
