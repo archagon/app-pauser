@@ -82,6 +82,8 @@
 
 -(void) updateProcessIDs
 {
+    double startTime = CACurrentMediaTime();
+    
     NSArray* runningApplications = [[NSWorkspace sharedWorkspace] runningApplications];
     NSMutableArray* processIDs = [NSMutableArray array];
     self.processIDsToApplications = [NSMutableDictionary dictionary];
@@ -115,6 +117,9 @@
             self.processIDsToEnergy[processID] = @0;
         }
     }
+    
+    double endTime = CACurrentMediaTime();
+    NSLog(@"model update total time: %lf", endTime-startTime);
     
     self.processIDs = sortedApplications;
 }

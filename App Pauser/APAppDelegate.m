@@ -74,7 +74,9 @@
     {
         if ([keyPath isEqualToString:NSStringFromSelector(@selector(processIDs))])
         {
+            ABTIME_AVG_START(reloadData);
             [self.table reloadData];
+            ABTIME_AVG_END(reloadData, 1, YES);
         }
         else if ([keyPath isEqualToString:NSStringFromSelector(@selector(cpuTimeUpdateTick))])
         {
@@ -98,7 +100,7 @@
             NSMutableIndexSet* cpuColumn = [NSMutableIndexSet indexSet];
             [cpuColumn addIndex:[self.table columnWithIdentifier:@"cpu"]];
             [cpuColumn addIndex:[self.table columnWithIdentifier:@"energy"]];
-            [self.table reloadDataForRowIndexes:rowsToChange columnIndexes:cpuColumn];
+//            [self.table reloadDataForRowIndexes:rowsToChange columnIndexes:cpuColumn];
         }
     }
 }
@@ -172,6 +174,8 @@
         return nil;
     }
     
+    ABTIME_AVG_START(tableCellReload);
+    
     pid_t processID = [self.dataSource.processIDs[row] intValue];
     BOOL applicationIsSuspended = [self.dataSource processIsSuspended:processID];
     NSString* status = [self.dataSource statusForProcess:processID];
@@ -236,10 +240,14 @@
     }
     else if ([[tableColumn identifier] isEqualToString:@"status"])
     {
-        status = [NSString stringWithFormat:@"%@ %@", [APSettings settingForKeyPath:[@"statussymbols." stringByAppendingString:[status substringToIndex:1]]], status];
+        if (status) {
+            status = [NSString stringWithFormat:@"%@ %@", [APSettings settingForKeyPath:[@"statussymbols." stringByAppendingString:[status substringToIndex:1]]], status];
+        }
         [cellView.imageView setHidden:YES];
-        cellView.textField.stringValue = status;
+        cellView.textField.stringValue = (status ? status : @"nil");
     }
+    
+    ABTIME_AVG_END(tableCellReload, 10, YES);
     
     return cellView;
 }
